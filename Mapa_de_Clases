@@ -1,0 +1,142 @@
+using System;
+
+public interface IMostrarInformacion
+{
+    void MostrarInformacion();
+}
+
+public class MiembroDeLaComunidad : IMostrarInformacion
+{
+    public string Nombre { get; private set; }
+    public string Identificacion { get; private set; }
+
+    public MiembroDeLaComunidad(string nombre, string identificacion)
+    {
+        if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(identificacion))
+            throw new ArgumentException("Nombre e identificación no pueden estar vacíos.");
+
+        Nombre = nombre;
+        Identificacion = identificacion;
+    }
+
+    public virtual void MostrarInformacion()
+    {
+        Console.WriteLine($"Nombre: {Nombre}, Identificación: {Identificacion}");
+    }
+
+    public override string ToString() => $"Nombre: {Nombre}, Identificación: {Identificacion}";
+}
+
+public class Empleado : MiembroDeLaComunidad
+{
+    public string Departamento { get; private set; }
+
+    public Empleado(string nombre, string identificacion, string departamento)
+        : base(nombre, identificacion)
+    {
+        if (string.IsNullOrWhiteSpace(departamento))
+            throw new ArgumentException("El departamento no puede estar vacío.");
+
+        Departamento = departamento;
+    }
+
+    public override void MostrarInformacion()
+    {
+        base.MostrarInformacion();
+        Console.WriteLine($"Departamento: {Departamento}");
+    }
+
+    public override string ToString() => base.ToString() + $", Departamento: {Departamento}";
+}
+
+public class Docente : Empleado
+{
+    public Docente(string nombre, string identificacion, string departamento)
+        : base(nombre, identificacion, departamento) { }
+
+    public override void MostrarInformacion()
+    {
+        base.MostrarInformacion();
+        Console.WriteLine("Rol: Docente");
+    }
+
+    public override string ToString() => base.ToString() + ", Rol: Docente";
+}
+
+public class Administrativo : Empleado
+{
+    public Administrativo(string nombre, string identificacion, string departamento)
+        : base(nombre, identificacion, departamento) { }
+
+    public override void MostrarInformacion()
+    {
+        base.MostrarInformacion();
+        Console.WriteLine("Rol: Administrativo");
+    }
+
+    public override string ToString() => base.ToString() + ", Rol: Administrativo";
+}
+
+public class Estudiante : MiembroDeLaComunidad
+{
+    public string Carrera { get; private set; }
+
+    public Estudiante(string nombre, string identificacion, string carrera)
+        : base(nombre, identificacion)
+    {
+        if (string.IsNullOrWhiteSpace(carrera))
+            throw new ArgumentException("La carrera no puede estar vacía.");
+
+        Carrera = carrera;
+    }
+
+    public override void MostrarInformacion()
+    {
+        base.MostrarInformacion();
+        Console.WriteLine($"Carrera: {Carrera}");
+    }
+
+    public override string ToString() => base.ToString() + $", Carrera: {Carrera}";
+}
+
+public class ExAlumno : MiembroDeLaComunidad
+{
+    public DateTime FechaGraduacion { get; private set; }
+
+    public ExAlumno(string nombre, string identificacion, DateTime fechaGraduacion)
+        : base(nombre, identificacion)
+    {
+        if (fechaGraduacion > DateTime.Now)
+            throw new ArgumentException("La fecha de graduación no puede ser en el futuro.");
+
+        FechaGraduacion = fechaGraduacion;
+    }
+
+    public override void MostrarInformacion()
+    {
+        base.MostrarInformacion();
+        Console.WriteLine($"Fecha de Graduación: {FechaGraduacion.ToShortDateString()}");
+    }
+
+    public override string ToString() => base.ToString() + $", Fecha de Graduación: {FechaGraduacion.ToShortDateString()}";
+}
+
+class Program
+{
+    static void Main()
+    {
+        MiembroDeLaComunidad[] miembros = new MiembroDeLaComunidad[]
+        {
+            new Docente("Carlos Pérez", "12345", "Ciencias"),
+            new Administrativo("Marta López", "67890", "Recursos Humanos"),
+            new Estudiante("Ana Gómez", "54321", "Ingeniería"),
+            new ExAlumno("Luis Fernández", "98765", new DateTime(2018, 6, 15))
+        };
+
+        foreach (var miembro in miembros)
+        {
+            miembro.MostrarInformacion();
+            Console.WriteLine();
+        }
+    }
+}
